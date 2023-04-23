@@ -6,7 +6,7 @@
 
     <groupId>glorydark.nukkit</groupId>
     <artifactId>Mytp</artifactId>
-    <version>1.0</version>
+    <version>1.1.8.3C3</version>
 	<repositories>
         <repository>
             <id>opencollab-repo-release</id>
