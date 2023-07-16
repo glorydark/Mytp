@@ -23,7 +23,6 @@ import java.util.Timer;
 
 import static glorydark.BaseAPI.*;
 
-@SuppressWarnings("ALL")
 public class MainClass extends PluginBase implements Listener {
     public static String path = null;
     public static MainClass plugin;
@@ -131,7 +130,7 @@ public class MainClass extends PluginBase implements Listener {
             player.sendMessage(getLang("Tips","world_is_not_loaded"));
             return;
         }
-        asker.teleportImmediate(player.getPosition().getLocation());
+        asker.teleport(player.getPosition().getLocation());
         asker.sendMessage(getLang("Tips","teleport_to_player").replace("%player%",player.getName()));
     }
 

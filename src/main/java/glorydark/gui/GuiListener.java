@@ -67,7 +67,7 @@ public class GuiListener implements Listener {
             case AcceptListInitiativeMENU:
                 switch (modal.getResponse().getClickedButtonId()){
                     case 0:
-                        p.teleportImmediate(sender);
+                        p.teleport(sender);
                         sender.sendMessage(getLang("Tips", "finish_active_sender").replace("%player%", p.getName()));
                         p.sendMessage(getLang("Tips", "finish_active_receiver").replace("%player%", sender.getName()));
                         break;
@@ -82,7 +82,7 @@ public class GuiListener implements Listener {
             case AcceptListPassiveMENU:
                 switch (modal.getResponse().getClickedButtonId()){
                     case 0:
-                        sender.teleportImmediate(p);
+                        sender.teleport(p);
                         sender.sendMessage(getLang("Tips", "finish_passive_sender").replace("%player%", p.getName()));
                         p.sendMessage(getLang("Tips", "finish_passive_receiver").replace("%player%", sender.getName()));
                         break;
@@ -589,7 +589,7 @@ public class GuiListener implements Listener {
                 Config pointc = new Config(MainClass.path+"/homes/"+p.getName()+"/"+sArr[1]+".yml",Config.YAML);
                 List<Double> position = pointc.getDoubleList("坐标");
                 String world = pointc.getString("世界");
-                p.teleportImmediate(new Location(position.get(0),position.get(1),position.get(2),p.getServer().getLevelByName(world)));
+                p.teleport(new Location(position.get(0),position.get(1),position.get(2),p.getServer().getLevelByName(world)));
                 break;
             case WarpMenu: //Warp系统
                 if(response == null){ return; }
@@ -662,7 +662,7 @@ public class GuiListener implements Listener {
                     if (!p.getServer().isLevelGenerated(world)){
                         p.sendMessage("WarpMenu");
                     }
-                    p.teleportImmediate(new Location(x,y,z,p.getServer().getLevelByName(world)));
+                    p.teleport(new Location(x,y,z,p.getServer().getLevelByName(world)));
                     if(warpconfig.exists("title")){
                         String[] strings = warpconfig.getString("title").split(":");
                         if(strings.length==1){

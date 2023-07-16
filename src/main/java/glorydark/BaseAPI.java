@@ -8,6 +8,7 @@ import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import glorydark.gui.GuiListener;
@@ -19,6 +20,9 @@ import java.util.Map;
 import java.util.Random;
 
 public class BaseAPI {
+
+    protected static NukkitRandom nukkitRandom = new NukkitRandom();
+
     public static Config getAllLang(){
         return new Config(MainClass.path+"/lang.yml");
     }
@@ -82,7 +86,7 @@ public class BaseAPI {
             return max;
         }
 
-        return min + new Random(System.currentTimeMillis()).nextInt(max - min);
+        return min + nukkitRandom.nextRange(0,  max - min);
     }
 
     public static void wild(Player p, Boolean free) {
@@ -92,23 +96,19 @@ public class BaseAPI {
             GuiListener.showFormWindow(p, returnForm, GuiType.ErrorMenu);
             return;
         }
+        double cost = (double) BaseAPI.getDefaultConfig("随机传送花费");
         if(!free) {
-            double cost = (double) BaseAPI.getDefaultConfig("随机传送花费");
             if (cost != 0d) {
                 if (EconomyAPI.getInstance().myMoney(p) < cost) {
                     p.sendMessage(getLang("Tips", "short_of_money"));
                     return;
                 }
-                EconomyAPI.getInstance().reduceMoney(p, cost);
             }
         }
         Location location = getSafePos(p);
-        if(location == null) {
-            p.sendMessage(getLang("Tips","wild_failed"));
-            return;
-        }
         if (p.teleport(location)) {
             p.sendMessage(getLang("Tips","wild_success"));
+            EconomyAPI.getInstance().reduceMoney(p, cost);
         } else {
             p.sendMessage(getLang("Tips","wild_failed"));
         }
@@ -118,29 +118,15 @@ public class BaseAPI {
 
         Config config = new Config(MainClass.path+"/config.yml",Config.YAML);
         Position pos;
-        if(p.getLevel().getName().equals("nether")) {
-            pos = p.getLevel().getSafeSpawn(new Vector3(rand(config.getInt("wild_minX"), config.getInt("wild_maxX")), 120, rand(config.getInt("wild_minZ"), config.getInt("wild_maxZ"))));
-            if(pos.y <= 32){
-                return null;
-            }
-        }else{
-            pos = p.getLevel().getSafeSpawn(new Vector3(rand(config.getInt("wild_minX"), config.getInt("wild_maxX")), 250, rand(config.getInt("wild_minZ"), config.getInt("wild_maxZ"))));
-        }
-        for(int i =0; i< 250; i++){
+        Level level = p.getLevel();
+        pos = new Location(rand(config.getInt("wild_minX"), config.getInt("wild_maxX")), 385, rand(config.getInt("wild_minZ"), config.getInt("wild_maxZ")), level);
+        for(int i =pos.getFloorY(); i>0; i--){
             pos.setY(pos.getFloorY() - 1);
             if(pos.getLevelBlock().isSolid()){
-                if(p.getLevel().getName().equals("nether")){
-                    p.getLevel().setBlock(pos.add(0, 1, 0), Block.get(0));
-                    p.getLevel().setBlock(pos.add(0, 2, 0), Block.get(0));
-                }
-                return new Location(pos.getFloorX()+0.5, pos.getFloorY() + 2, pos.getFloorZ()+0.5, p.getLevel());
+                return new Location(pos.getFloorX(), pos.getFloorY() + 2, pos.getFloorZ(), level);
             }
         }
-        if(p.getLevel().getName().equals("nether")){
-            p.getLevel().setBlock(pos.add(0, 1, 0), Block.get(0));
-            p.getLevel().setBlock(pos.add(0, 2, 0), Block.get(0));
-        }
-        return new Location(pos.getFloorX()+0.5, pos.getFloorY() + 2, pos.getFloorZ()+0.5, p.getLevel());
+        return new Location(pos.getFloorX(), pos.getFloorY() + 2, pos.getFloorZ(), level);
     }
 
     public static Object getDefaultConfig(String key){
@@ -185,7 +171,7 @@ public class BaseAPI {
             double z = playerconfig.getDouble("lastdeath.z");
             Level level = p.getServer().getLevelByName(playerconfig.getString("lastdeath.level"));
             if(level != null) {
-                p.teleportImmediate(new Location(x, y, z, level));
+                p.teleport(new Location(x, y, z, level));
             }else{
                 p.sendMessage(getLang("Tips","world_is_not_loaded"));
             }
@@ -203,7 +189,7 @@ public class BaseAPI {
         }
         if(p.getServer().getLevels().containsValue(level)) {
             Position spawnpos = level.getSpawnLocation();
-            p.teleportImmediate(spawnpos.getLocation());
+            p.teleport(spawnpos.getLocation());
             p.sendMessage(getLang("Tips","on_teleporting"));
         }else{
             p.sendMessage(getLang("Tips","world_is_not_loaded"));

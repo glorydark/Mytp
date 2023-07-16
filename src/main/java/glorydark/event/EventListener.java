@@ -147,7 +147,7 @@ public class EventListener implements Listener {
                 double z = Double.parseDouble(poses[2]);
                 String levelname = poses[3];
                 if (Server.getInstance().getLevelByName(levelname) != null) {
-                    event.getPlayer().teleportImmediate(new Location(x, y, z, Server.getInstance().getLevelByName(levelname)));
+                    event.getPlayer().teleport(new Location(x, y, z, Server.getInstance().getLevelByName(levelname)));
                 } else {
                     event.getPlayer().sendMessage(getLang("Tips", "world_is_not_loaded"));
                 }
