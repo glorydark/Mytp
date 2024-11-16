@@ -7,15 +7,15 @@ import glorydark.BaseAPI;
 import glorydark.gui.GuiMainAPI;
 
 public class tpaCommand extends Command {
-    public tpaCommand(){
-        super("tpa","","/tpa");
+    public tpaCommand() {
+        super("tpa", "", "/tpa");
     }
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        if(commandSender instanceof Player){
+        if (commandSender instanceof Player) {
             GuiMainAPI.showTeleportMenu((Player) commandSender, 0);
-        }else{
+        } else {
             commandSender.sendMessage(BaseAPI.getLang("Tips", "plz_use_it_in_game"));
         }
         return true;

@@ -17,9 +17,19 @@ public enum ButtonType {
 
     private final String type;
     private final int originId;
-    private ButtonType(String type, int originId){
+
+    private ButtonType(String type, int originId) {
         this.type = type;
         this.originId = originId;
+    }
+
+    public static ButtonType getTypeByString(String string) {
+        for (ButtonType buttonType : ButtonType.values()) {
+            if (buttonType.getType().equals(string)) {
+                return buttonType;
+            }
+        }
+        return UNDEFINED;
     }
 
     public int getOriginId() {
@@ -28,14 +38,5 @@ public enum ButtonType {
 
     public String getType() {
         return type;
-    }
-
-    public static ButtonType getTypeByString(String string){
-        for(ButtonType buttonType: ButtonType.values()){
-            if(buttonType.getType().equals(string)){
-                return buttonType;
-            }
-        }
-        return UNDEFINED;
     }
 }

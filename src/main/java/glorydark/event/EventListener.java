@@ -29,26 +29,28 @@ import static glorydark.BaseAPI.getLang;
 public class EventListener implements Listener {
 
     @EventHandler
-    public void PlayerRespawnEvent(PlayerRespawnEvent event){
-        if(event.getPlayer().getGamemode() == 1 || event.getPlayer().getGamemode() == 3){ return; }
-        if(!event.isFirstSpawn()) {
+    public void PlayerRespawnEvent(PlayerRespawnEvent event) {
+        if (event.getPlayer().getGamemode() == 1 || event.getPlayer().getGamemode() == 3) {
+            return;
+        }
+        if (!event.isFirstSpawn()) {
             Player player = event.getPlayer();
             if (player == null) {
                 return;
             }
-            Config mainCfg = new Config(MainClass.path+"/config.yml",Config.YAML);
-            if(mainCfg.exists("是否使用快捷工具") && mainCfg.getBoolean("是否使用快捷工具",true)) {
+            Config mainCfg = new Config(MainClass.path + "/config.yml", Config.YAML);
+            if (mainCfg.exists("是否使用快捷工具") && mainCfg.getBoolean("是否使用快捷工具", true)) {
                 Item convenience = new Item(mainCfg.getInt("快捷工具ID", 347));
-                convenience.setLore(getLang("Convenient_Tool","lore"));
-                String nametag = getLang("Convenient_Tool","nametag");
+                convenience.setLore(getLang("Convenient_Tool", "lore"));
+                String nametag = getLang("Convenient_Tool", "nametag");
                 convenience.setCustomName(nametag);
                 convenience.setDamage(0);
-                if(!event.getPlayer().getInventory().getContents().values().stream().filter(item -> item.getCustomName().equals(nametag)).sorted().findAny().isPresent()) {
+                if (!event.getPlayer().getInventory().getContents().values().stream().filter(item -> item.getCustomName().equals(nametag)).sorted().findAny().isPresent()) {
                     event.getPlayer().getInventory().addItem(convenience);
                     event.getPlayer().sendMessage(getLang("Tips", "given_convenient_tool"));
                 }
             }
-            if((Boolean) BaseAPI.getDefaultConfig("死亡回主城")) {
+            if ((Boolean) BaseAPI.getDefaultConfig("死亡回主城")) {
                 if (BaseAPI.getDefaultConfig("主城坐标") != null && !BaseAPI.getDefaultConfig("主城坐标").equals("null")) {
                     String pos = (String) BaseAPI.getDefaultConfig("主城坐标");
                     String[] poses = pos.split(":");
@@ -64,8 +66,8 @@ public class EventListener implements Listener {
                         player.sendMessage(getLang("Tips", "world_is_not_loaded"));
                     }
                 }
-            }else{
-                Config config = new Config(MainClass.path+"/player/"+player.getName()+".yml");
+            } else {
+                Config config = new Config(MainClass.path + "/player/" + player.getName() + ".yml");
                 if (config.exists("spawnpoint")) {
                     String levelname = config.getString("spawnpoint.level");
                     if (Server.getInstance().getLevelByName(levelname) != null) {
@@ -78,29 +80,29 @@ public class EventListener implements Listener {
                     } else {
                         player.sendMessage(getLang("Tips", "world_is_not_loaded"));
                     }
-                }else{
-                    if(MainClass.bedFeature && config.exists("bedSpawn")){
+                } else {
+                    if (MainClass.bedFeature && config.exists("bedSpawn")) {
                         String levelname = config.getString("bedSpawn.level");
                         if (Server.getInstance().getLevelByName(levelname) != null) {
                             double x = config.getDouble("bedSpawn.x");
                             double y = config.getDouble("bedSpawn.y");
                             double z = config.getDouble("bedSpawn.z");
                             Location location = new Location(x, y, z, player.getServer().getLevelByName(levelname));
-                            if(location.getLevelBlock().getId() == Block.BED_BLOCK){
+                            if (location.getLevelBlock().getId() == Block.BED_BLOCK) {
                                 event.setRespawnPosition(location);
                                 player.teleport(new Position(x, y, z, player.getServer().getLevelByName(levelname)), null);
                                 player.sendMessage(getLang("Tips", "back_to_spawnpoint"));
-                            }else{
+                            } else {
                                 config.remove("bedSpawn");
                                 config.save();
                                 player.sendMessage(new TranslationContainer("tile.bed.notValid"));
                             }
-                        }else{
+                        } else {
                             player.sendMessage(new TranslationContainer("tile.bed.notValid"));
                             event.setRespawnPosition(player.getSpawn());
                             player.teleport(player.getSpawn(), null);
                         }
-                    }else {
+                    } else {
                         event.setRespawnPosition(player.getSpawn());
                         player.teleport(player.getSpawn(), null);
                     }
@@ -122,18 +124,18 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
-    public void PlayerLocallyInitializedEvent(PlayerLocallyInitializedEvent event){
+    public void PlayerLocallyInitializedEvent(PlayerLocallyInitializedEvent event) {
         if (event.getPlayer() == null) {
             return;
         }
-        Config config = new Config(MainClass.path+"/config.yml",Config.YAML);
-        if(config.exists("是否使用快捷工具") && config.getBoolean("是否使用快捷工具",true)) {
+        Config config = new Config(MainClass.path + "/config.yml", Config.YAML);
+        if (config.exists("是否使用快捷工具") && config.getBoolean("是否使用快捷工具", true)) {
             Item convenience = new Item(config.getInt("快捷工具ID", 347));
-            convenience.setLore(getLang("Convenient_Tool","lore"));
-            String nametag = getLang("Convenient_Tool","nametag");
+            convenience.setLore(getLang("Convenient_Tool", "lore"));
+            String nametag = getLang("Convenient_Tool", "nametag");
             convenience.setCustomName(nametag);
             convenience.setDamage(0);
-            if(!event.getPlayer().getInventory().getContents().values().stream().filter(item -> item.getCustomName().equals(nametag)).sorted().findAny().isPresent()) {
+            if (!event.getPlayer().getInventory().getContents().values().stream().filter(item -> item.getCustomName().equals(nametag)).sorted().findAny().isPresent()) {
                 event.getPlayer().getInventory().addItem(convenience);
                 event.getPlayer().sendMessage(getLang("Tips", "given_convenient_tool"));
             }
@@ -157,17 +159,17 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
-    public void PlayerInteractEvent(PlayerInteractEvent event){
+    public void PlayerInteractEvent(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         if (player == null) {
             return;
         }
-        if(MainClass.bedFeature){
+        if (MainClass.bedFeature) {
             Block block = event.getBlock();
-            if(block.getId() == Block.BED_BLOCK){
-                if(block.getLocation().distance(player.getLocation()) > 1.5D){
+            if (block.getId() == Block.BED_BLOCK) {
+                if (block.getLocation().distance(player.getLocation()) > 1.5D) {
                     player.sendMessage(new TranslationContainer("tile.bed.tooFar"));
-                }else {
+                } else {
                     if (canSafelyFallAsleep(player)) {
                         Config config = new Config(MainClass.path + "/player/" + player.getName() + ".yml", Config.YAML);
                         config.set("bedSpawn.x", block.getX());
@@ -197,13 +199,13 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
-    public void PlayerDropItemEvent(PlayerDropItemEvent event){
+    public void PlayerDropItemEvent(PlayerDropItemEvent event) {
         Config config = new Config(MainClass.path + "/config.yml", Config.YAML);
         if (!config.getBoolean("快捷工具丢弃", true)) {
             Player player = event.getPlayer();
             Item i = player.getInventory().getItemInHand();
             if (i.getId() == 347 && i.getCustomName().equals(getLang("Convenient_Tool", "nametag"))) {
-                event.getPlayer().sendActionBar(getLang("Convenient_Tool","unable_to_drop"));
+                event.getPlayer().sendActionBar(getLang("Convenient_Tool", "unable_to_drop"));
                 event.setCancelled(true);
             }
         }
@@ -249,9 +251,9 @@ public class EventListener implements Listener {
         }
     }
 
-    public boolean canSafelyFallAsleep(Player player){
-        for(Entity entity: player.getLevel().getEntities()){
-            if(entity instanceof EntityMob && entity.distance(player.getLocation()) < 10D){
+    public boolean canSafelyFallAsleep(Player player) {
+        for (Entity entity : player.getLevel().getEntities()) {
+            if (entity instanceof EntityMob && entity.distance(player.getLocation()) < 10D) {
                 return false;
             }
         }
@@ -259,24 +261,26 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
-    public void PlayerDeathEvent(PlayerDeathEvent event){
-        if(event.getEntity() == null){return; }
-        Config playerconfig = new Config(MainClass.path+"/player/"+ event.getEntity().getName()+".yml",Config.YAML);
-        playerconfig.set("lastdeath.x",event.getEntity().getX());
-        playerconfig.set("lastdeath.y",event.getEntity().getY());
-        playerconfig.set("lastdeath.z",event.getEntity().getZ());
-        playerconfig.set("lastdeath.level",event.getEntity().getLevel().getName());
+    public void PlayerDeathEvent(PlayerDeathEvent event) {
+        if (event.getEntity() == null) {
+            return;
+        }
+        Config playerconfig = new Config(MainClass.path + "/player/" + event.getEntity().getName() + ".yml", Config.YAML);
+        playerconfig.set("lastdeath.x", event.getEntity().getX());
+        playerconfig.set("lastdeath.y", event.getEntity().getY());
+        playerconfig.set("lastdeath.z", event.getEntity().getZ());
+        playerconfig.set("lastdeath.level", event.getEntity().getLevel().getName());
         playerconfig.save();
         MainClass.godPlayer.remove(event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void PlayerDamageEvent(EntityDamageEvent event){
+    public void PlayerDamageEvent(EntityDamageEvent event) {
         if (event.getEntity() == null) {
             return;
         }
-        if(event.getEntity() instanceof Player) {
-            if (MainClass.godPlayer.contains(((Player) event.getEntity()).getPlayer())){
+        if (event.getEntity() instanceof Player) {
+            if (MainClass.godPlayer.contains(((Player) event.getEntity()).getPlayer())) {
                 event.getEntity().setHealth(event.getEntity().getMaxHealth());
                 event.setCancelled(true);
             }

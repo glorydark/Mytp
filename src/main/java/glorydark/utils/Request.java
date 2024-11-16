@@ -9,7 +9,7 @@ public class Request {
 
     public RequestType requestType; //类型
 
-    public Request(String sender, String receiver, RequestType requestType){
+    public Request(String sender, String receiver, RequestType requestType) {
         this.sender = sender;
         this.receiver = receiver;
         this.requestType = requestType;
@@ -28,7 +28,7 @@ public class Request {
         return sender;
     }
 
-    public boolean isExpired(){
+    public boolean isExpired() {
         return System.currentTimeMillis() - millis > 60000; //1分钟时长
     }
 }
